@@ -26,16 +26,25 @@ def main() -> None:
 
     for movie in movies_json["movies"]:
         movie_title_search = remove_puncutation_and_lower(movie["title"])
-        if(search_value in movie_title_search):
+        split_in_movie = split_search(search_value,movie_title_search)
+        
+        if split_in_movie:
             movie_title = movie["title"]
             print(f"{movie_num}. {movie_title}")
             movie_num +=1
+        
         if movie_num > 5:
             break
 
 def remove_puncutation_and_lower(input_val:string) -> string:
     input_val = input_val.lower()
     return input_val.translate(str.maketrans("","",string.punctuation))
+
+def split_search(search_in:string, movie_title:string) -> bool:
+    split_vals = search_in.split()
+    for val in split_vals:
+        if val in movie_title:
+            return True
 
 if __name__ == "__main__":
     main()
