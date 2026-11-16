@@ -21,12 +21,17 @@ def main() -> None:
     with open("/home/ckronber/BootDev/rag-search-engine/data/movies.json", "r", encoding="utf-8") as file:
         movies_json = json.load(file)
 
+    with open("/home/ckronber/BootDev/rag-search-engine/data/stopwords.txt","r") as file:
+        stop_words = file.read().splitlines()
+
+    stop_words_nopunc = [remove_puncutation_and_lower(word) for word in stop_words]
+
     movie_num = 1
     search_value = remove_puncutation_and_lower(args.query)
 
     for movie in movies_json["movies"]:
         movie_title_search = remove_puncutation_and_lower(movie["title"])
-        split_in_movie = split_search(search_value,movie_title_search)
+        split_in_movie = split_search(search_value,movie_title_search,stop_words_nopunc)
         
         if split_in_movie:
             movie_title = movie["title"]
@@ -40,10 +45,10 @@ def remove_puncutation_and_lower(input_val:string) -> string:
     input_val = input_val.lower()
     return input_val.translate(str.maketrans("","",string.punctuation))
 
-def split_search(search_in:string, movie_title:string) -> bool:
+def split_search(search_in:string, movie_title:string, stop_words:list) -> bool:
     split_vals = search_in.split()
     for val in split_vals:
-        if val in movie_title:
+        if (val in movie_title) and (val not in stop_words): 
             return True
 
 if __name__ == "__main__":
