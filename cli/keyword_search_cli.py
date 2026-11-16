@@ -1,6 +1,7 @@
 import argparse
 import json
 import string
+from nltk.stem import PorterStemmer
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Keyword Search CLI")
@@ -25,7 +26,6 @@ def main() -> None:
         stop_words = file.read().splitlines()
 
     stop_words_nopunc = [remove_puncutation_and_lower(word) for word in stop_words]
-
     movie_num = 1
     search_value = remove_puncutation_and_lower(args.query)
 
@@ -47,8 +47,9 @@ def remove_puncutation_and_lower(input_val:string) -> string:
 
 def split_search(search_in:string, movie_title:string, stop_words:list) -> bool:
     split_vals = search_in.split()
+    stemmer = PorterStemmer()
     for val in split_vals:
-        if (val in movie_title) and (val not in stop_words): 
+        if (stemmer.stem(val) in movie_title) and (stemmer.stem(val) not in stop_words): 
             return True
 
 if __name__ == "__main__":
